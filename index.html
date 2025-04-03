@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Magia Interactiva</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div id="contenedor-app">
+
+        
+        <!-- SIMULADOR DE PANTALLA -->
+        <div id="pantalla" class="marco-simulador">
+            
+            <!-- BARRA VOLVER -->
+            <button id="barraVolver" onclick="volver()" aria-label="Volver">←</button>
+
+            <!-- Botón pantalla completa solo en la pantalla inicial -->
+            <button class="boton-fullscreen" onclick="activarPantallaCompleta()" aria-label="Pantalla completa">⛶</button>
+
+            
+            <!-- PANTALLA INICIAL -->
+            <div id="pantallaInicial" class="pantalla">
+                <img src="Menus/1_PantallaInicial.svg" class="fondo" />
+                <button class="zona-jugar" onclick="irAMenu()" aria-label="JUGAR"></button>
+                <button class="boton-fullscreen" onclick="activarPantallaCompleta()" aria-label="Pantalla completa">⛶</button>
+            </div>
+
+            <!-- MENÚ MODOS -->
+            <div id="menuModos" class="pantalla oculto">
+                <img src="Menus/2_MenuModos.svg" class="fondo" />
+                <button class="zona-menus" style="top: 20%; left: 2%;" aria-label="Cielo"></button>
+                <button class="zona-menus" style="top: 47%; left: 2%;" aria-label="Tierra"></button>
+                <button class="zona-menus" style="top: 75%; left: 2%;" aria-label="Mar"></button>
+                <button class="zona-menus" style="top: 20%; left: 53%;" onclick="irAMenuLetras()" aria-label="Abecedario"></button>
+                <button class="zona-menus" style="top: 47%; left: 53%;" aria-label="Números"></button>
+                <button class="zona-menus" style="top: 75%; left: 53%;" aria-label="Figuras"></button>
+            </div>
+
+            <!-- MENÚ LETRAS -->
+            <div id="menuLetras" class="pantalla oculto">
+                <img src="Menus/3_MenuLetras.svg" class="fondo" />
+                <button class="zona-letras" style="top: 1%; left: 2%;" onclick="irALetra('letra-a')"
+                    aria-label="Letra A"></button>
+            </div>
+
+            <!-- LETRA A -->
+            <div id="pantallaLetraA" class="pantalla oculto">
+                <object type="image/svg+xml" data="Letras/letra-a.svg" class="fondo"></object>
+            </div>
+
+        </div>
+
+        <!-- AVISO VERTICAL -->
+        <div id="avisoOrientacion">Por favor gira tu dispositivo a horizontal 😊</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
