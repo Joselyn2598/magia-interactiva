@@ -1,103 +1,144 @@
-// === HISTORIAL DE NAVEGACIÓN ===
-// Guarda el recorrido del usuario para poder volver atrás
+// === 1. VARIABLES GLOBALES ===
+// Historial de navegación y control de pantalla actual
 let historial = [];
-
-// === CONTROL DE PANTALLA ACTUAL ===
-// Esto nos permite saber en qué pantalla estamos en todo momento
 window.pantallaActual = "pantallaInicial";
 
-// === FUNCIÓN PARA MOSTRAR UNA PANTALLA Y OCULTAR LAS DEMÁS ===
+// === 2. FUNCIONES DE NAVEGACIÓN ENTRE PANTALLAS ===
+/**
+ * Muestra una pantalla específica y oculta las demás.
+ * @param {string} id - ID de la pantalla a mostrar.
+ */
 function mostrar(id) {
-    // Ocultar todas las pantallas
     document.querySelectorAll(".pantalla").forEach(p => p.classList.add("oculto"));
-
-    // Mostrar la pantalla solicitada
     document.getElementById(id).classList.remove("oculto");
-
-    // Actualiza el identificador global de la pantalla actual
     window.pantallaActual = id;
 
-    // Controla visibilidad del botón "← Volver"
     const barra = document.getElementById("barraVolver");
-    if (id === "pantallaInicial") {
-        barra.style.display = "none"; // Ocultar en pantalla de inicio
-    } else {
-        barra.style.display = "flex"; // Mostrar en todas las demás
-    }
+    barra.style.display = id === "pantallaInicial" ? "none" : "flex";
+
+    // Ajustar tamaño de los canvas visibles
+    document.querySelectorAll(`#${id} canvas`).forEach(canvas => {
+        if (canvas.getContext) {
+            const ctx = canvas.getContext("2d");
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 5;
+        }
+    });
 }
 
-// === FUNCIONES PARA NAVEGAR ENTRE PANTALLAS ===
-
-// Desde la pantalla inicial al menú de modos
+// Funciones para navegar entre pantallas
 function irAMenu() {
     historial.push("pantallaInicial");
     mostrar("menuModos");
 }
 
-// Desde el menú de modos al menú de letras
 function irAMenuLetras() {
     historial.push("menuModos");
     mostrar("menuLetras");
 }
 
-// Ir a una letra específica (por ahora solo la letra A funciona)
+function irAMenuNumeros() {
+    historial.push("menuModos");
+    mostrar("menuNumeros");
+}
+
+function irAMenuFiguras() {
+    historial.push("menuModos");
+    mostrar("menuFiguras");
+}
+
 function irALetra(letraId) {
-    if (letraId === "letra-a") {
+    const pantallasDisponibles = {
+        "letra-a": "pantallaLetraA",
+        "letra-b": "pantallaLetraB",
+        "letra-c": "pantallaLetraC",
+        "letra-d": "pantallaLetraD",
+        "letra-e": "pantallaLetraE",
+        "letra-f": "pantallaLetraF",
+        "letra-g": "pantallaLetraG",
+        "letra-h": "pantallaLetraH",
+        "letra-i": "pantallaLetraI",
+        "letra-j": "pantallaLetraJ",
+        "letra-k": "pantallaLetraK",
+        "letra-l": "pantallaLetraL",
+        "letra-m": "pantallaLetraM",
+        "letra-n": "pantallaLetraN",
+        "letra-ñ": "pantallaLetraÑ",
+        "letra-o": "pantallaLetraO",
+        "letra-p": "pantallaLetraP",
+        "letra-q": "pantallaLetraQ",
+        "letra-r": "pantallaLetraR",
+        "letra-s": "pantallaLetraS",
+        "letra-t": "pantallaLetraT",
+        "letra-u": "pantallaLetraU",
+        "letra-v": "pantallaLetraV",
+        "letra-w": "pantallaLetraW",
+        "letra-x": "pantallaLetraX",
+        "letra-y": "pantallaLetraY",
+        "letra-z": "pantallaLetraZ",
+    };
+
+    if (pantallasDisponibles[letraId]) {
         historial.push("menuLetras");
-        mostrar("pantallaLetraA");
+        mostrar(pantallasDisponibles[letraId]);
     } else {
         alert("Pantalla aún no disponible.");
     }
 }
 
-// === FUNCIÓN PARA VOLVER A LA PANTALLA ANTERIOR ===
+function irANumero(numeroId) {
+    const pantallaNumero = document.getElementById(`pantalla${numeroId.charAt(0).toUpperCase() + numeroId.slice(1)}`);
+    if (pantallaNumero) {
+        historial.push("menuNumeros");
+        mostrar(pantallaNumero.id);
+    } else {
+        alert("Pantalla del número aún no disponible.");
+    }
+}
+
+function irAFigura(figuraId) {
+    const pantallaFigura = document.getElementById(`pantalla${figuraId}`);
+    if (pantallaFigura) {
+        historial.push("menuFiguras");
+        mostrar(pantallaFigura.id);
+    } else {
+        alert("Pantalla de la figura aún no disponible.");
+    }
+}
+
 function volver() {
-    const anterior = historial.pop(); // Recupera la última pantalla
+    const anterior = historial.pop();
     if (anterior) {
         mostrar(anterior);
     }
 }
 
+// === 3. FUNCIONES DE PANTALLA COMPLETA ===
 function activarPantallaCompleta() {
     const elem = document.documentElement;
 
-    if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-    }
-
-    // Forzar redibujo del layout tras breve retraso
-    setTimeout(() => {
-        window.dispatchEvent(new Event('resize'));
-    }, 500);
-}
-
-// Detectar entrada o salida de pantalla completa
-document.addEventListener("fullscreenchange", () => {
-    const boton = document.querySelector(".boton-fullscreen");
-    if (document.fullscreenElement) {
-        // Si estamos en pantalla completa → ocultar botón
-        boton.style.display = "none";
+    if (!document.fullscreenElement) {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        }
     } else {
-        // Si salimos de pantalla completa → volver a mostrar
-        if (window.pantallaActual === "pantallaInicial") {
-            boton.style.display = "block";
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
         }
     }
-});
+}
 
-//! === FUNCIÓN PARA INICIAR LA ANIMACIÓN DE LA LETRA A ===
-// function iniciarAnimacionLetraA() {
-    // const letra = document.getElementById("letraA");
-    // letra.classList.add("animarLetra");
-// }
-
-//! === FUNCIÓN PARA INICIAR LA ANIMACIÓN DE LA LETRA ===
-// function iniciarAnimacionLetra() {
-//     const letra = document.getElementById("letraA");
-//     letra.classList.add("animarLetra");
-// }
-
-// === DETECCIÓN DE ORIENTACIÓN (vertical u horizontal) ===
+// === 4. DETECCIÓN DE ORIENTACIÓN ===
 function detectarOrientacion() {
     const esDispositivoMovil = /Android|iPhone|iPad|iPod|Tablet/i.test(navigator.userAgent);
     const enRetrato = window.innerHeight > window.innerWidth;
@@ -107,25 +148,108 @@ function detectarOrientacion() {
     const barra = document.getElementById("barraVolver");
 
     if (esDispositivoMovil && enRetrato) {
-        // Si es móvil y está en modo vertical, muestra aviso y oculta interfaz
         pantalla.style.display = "none";
         aviso.style.display = "flex";
         barra.style.display = "none";
     } else {
-        // Si es horizontal o está en PC
         pantalla.style.display = "flex";
         aviso.style.display = "none";
-
-        // Mostrar botón volver solo si no estamos en la pantalla inicial
-        if (window.pantallaActual !== "pantallaInicial") {
-            barra.style.display = "flex";
-        } else {
-            barra.style.display = "none";
-        }
+        barra.style.display = window.pantallaActual !== "pantallaInicial" ? "flex" : "none";
     }
 }
 
-// === EVENTOS PARA MONITOREAR CAMBIOS DE TAMAÑO U ORIENTACIÓN ===
 window.addEventListener("load", detectarOrientacion);
 window.addEventListener("resize", detectarOrientacion);
 window.addEventListener("orientationchange", detectarOrientacion);
+
+// === 5. FUNCIONES PARA CANVAS ===
+document.addEventListener("DOMContentLoaded", () => {
+    const canvases = document.querySelectorAll(".canvas-trazos");
+
+    canvases.forEach(canvas => {
+        const ctx = canvas.getContext("2d");
+
+        function ajustarCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 5;
+        }
+
+        ajustarCanvas();
+        window.addEventListener("resize", ajustarCanvas);
+
+        let dibujando = false;
+
+        canvas.addEventListener("mousedown", (e) => {
+            dibujando = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        });
+
+        canvas.addEventListener("mousemove", (e) => {
+            if (dibujando) {
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+            }
+        });
+
+        canvas.addEventListener("mouseup", () => {
+            dibujando = false;
+            ctx.closePath();
+        });
+
+        canvas.addEventListener("mouseleave", () => {
+            dibujando = false;
+            ctx.closePath();
+        });
+
+        canvas.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            dibujando = true;
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            ctx.beginPath();
+            ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+        });
+
+        canvas.addEventListener("touchmove", (e) => {
+            e.preventDefault();
+            if (dibujando) {
+                const touch = e.touches[0];
+                const rect = canvas.getBoundingClientRect();
+                ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+                ctx.stroke();
+            }
+        });
+
+        canvas.addEventListener("touchend", () => {
+            dibujando = false;
+            ctx.closePath();
+        });
+
+        canvas.addEventListener("touchcancel", () => {
+            dibujando = false;
+            ctx.closePath();
+        });
+
+        canvas.limpiarCanvas = function () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        };
+    });
+
+    window.limpiarCanvas = function (canvasId) {
+        const canvas = document.getElementById(canvasId);
+        if (canvas && canvas.getContext) {
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    };
+
+    window.cambiarGrosorTrazo = function (grosor) {
+        canvases.forEach(canvas => {
+            const ctx = canvas.getContext("2d");
+            ctx.lineWidth = grosor;
+        });
+    };
+});
