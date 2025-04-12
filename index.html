@@ -20,9 +20,6 @@
             <!-- BOTÓN PANTALLA COMPLETA -->
             <button id="boton-fullscreen" onclick="activarPantallaCompleta()" aria-label="Pantalla completa">⛶</button>
 
-            <!-- BOTÓN LIMPIAR CANVAS -->
-            <!-- <button onclick="limpiarCanvas('canvasLetraA')">Limpiar</button> -->
-
             <!-- PANTALLA INICIAL -->
             <div id="pantallaInicial" class="pantalla">
                 <img src="Menus/1_PantallaInicial.svg" class="fondo" />
@@ -34,19 +31,34 @@
             <div id="menuModos" class="pantalla oculto">
                 <img src="Menus/2_MenuModos.svg" class="fondo" />
                 <!-- Botones de selección de modos -->
-                <button class="zona-menus" style="top: 22.5%; left: 2%;" onclick="cambiarModo('Cielo')" aria-label="Cielo"></button>
-                <button class="zona-menus" style="top: 47%; left: 2%;" onclick="cambiarModo('Tierra')" aria-label="Tierra"></button>
-                <button class="zona-menus" style="top: 72%; left: 2%;" onclick="cambiarModo('Mar')" aria-label="Mar"></button>
+                <button class="zona-menus" style="top: 22.5%; left: 2%;" onclick="irAPantalla('pantallaCielo')" aria-label="Cielo"></button>
+                <button class="zona-menus" style="top: 47%; left: 2%;" onclick="irAPantalla('pantallaTierra')" aria-label="Tierra"></button>
+                <button class="zona-menus" style="top: 72%; left: 2%;" onclick="irAPantalla('pantallaMar')" aria-label="Mar"></button>
                 <button class="zona-menus" style="top: 22.5%; left: 53%;" onclick="irAMenuLetras()" aria-label="Abecedario"></button>
                 <button class="zona-menus" style="top: 47%; left: 53%;" onclick="irAMenuNumeros()" aria-label="Números"></button>
                 <button class="zona-menus" style="top: 72%; left: 53%;" onclick="irAMenuFiguras()" aria-label="Figuras"></button>
             </div>
 
-            <!-- Contenedor dinámico para pantallas de modos -->
-            <div id="pantallasModos">
-                <script>
-                    cambiarGrosorTrazo(20); // Fijar el grosor del trazo al máximo
-                </script>
+            <!-- PANTALLA CIELO -->
+            <div id="pantallaCielo" class="pantalla oculto">
+                <img src="Fondos/Cielo.svg" class="fondo" />
+                <button id="barraVolver" onclick="volver()" aria-label="Volver">←</button>
+                <button id="boton-fullscreen" onclick="activarPantallaCompleta()" aria-label="Pantalla completa">⛶</button>
+            </div>
+
+            <!-- PANTALLA TIERRA -->
+            <div id="pantallaTierra" class="pantalla oculto">
+                <img src="Fondos/Tierra.svg" class="fondo" />
+                <button id="barraVolver" onclick="volver()" aria-label="Volver">←</button>
+                <button id="boton-fullscreen" onclick="activarPantallaCompleta()" aria-label="Pantalla completa">⛶</button>
+            </div>
+
+            <!-- PANTALLA MAR -->
+            <div id="pantallaMar" class="pantalla oculto">
+                <img src="Fondos/Mar.svg" class="fondo" />
+                <div id="contenedorBurbujas"></div> <!-- Contenedor para las burbujas -->
+                <button id="barraVolver" onclick="volver()" aria-label="Volver">←</button>
+                <button id="boton-fullscreen" onclick="activarPantallaCompleta()" aria-label="Pantalla completa">⛶</button>
             </div>
 
             <!-- MENÚ LETRAS -->
@@ -56,11 +68,9 @@
             </div>
 
             <!-- Contenedor dinámico para pantallas de letras -->
-            <div id="pantallasLetras">
-                <script>
-                    cambiarGrosorTrazo(20); // Fijar el grosor del trazo al máximo
-                </script>
-            </div>
+            <div id="pantallasLetras"></div>
+
+            <div id="contenedorLetras"></div>
 
             <!-- MENÚ NÚMEROS -->
             <div id="menuNumeros" class="pantalla oculto">
@@ -69,11 +79,7 @@
             </div>
 
             <!-- Contenedor dinámico para pantallas de números -->
-            <div id="pantallasNumeros">
-                <script>
-                    cambiarGrosorTrazo(20); // Fijar el grosor del trazo al máximo
-                </script>
-            </div>
+            <div id="pantallasNumeros"></div>
 
             <!-- MENÚ FIGURAS -->
             <div id="menuFiguras" class="pantalla oculto">
@@ -82,15 +88,9 @@
             </div>
 
             <!-- Contenedor dinámico para pantallas de figuras -->
-            <div id="pantallasFiguras">
-                <script>
-                    cambiarGrosorTrazo(20); // Fijar el grosor del trazo al máximo
-                </script>
-            </div>
+            <div id="pantallasFiguras"></div>
 
         </div>
-
-        <div id="contenedorLetras"></div>
 
         <!-- AVISO ORIENTACIÓN -->
         <div id="avisoOrientacion">Por favor gira tu dispositivo a horizontal 😊</div>
@@ -99,6 +99,11 @@
     <!-- Script principal -->
     <script src="script.js"></script>
     <script src="dynamicContent.js"></script> <!-- Nuevo script para contenido dinámico -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            cambiarGrosorTrazo(20); // Fijar el grosor del trazo al máximo al cargar la página
+        });
+    </script>
 </body>
 
 </html>

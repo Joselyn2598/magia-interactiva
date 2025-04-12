@@ -3,11 +3,6 @@
 let historial = [];
 window.pantallaActual = "pantallaInicial";
 
-// Variables globales para el modo actual
-let modoActual = "";
-let intervaloGusanos = null;
-let intervaloBurbujas = null;
-
 // === 2. FUNCIONES DE NAVEGACIÓN ENTRE PANTALLAS ===
 /**
  * Muestra una pantalla específica y oculta las demás.
@@ -113,13 +108,18 @@ function irAFigura(figuraId) {
     }
 }
 
+function irAPantalla(idPantalla) {
+    document.querySelectorAll('.pantalla').forEach(pantalla => {
+        pantalla.classList.add('oculto');
+    });
+    document.getElementById(idPantalla).classList.remove('oculto');
+}
+
 function volver() {
-    if (historial.length > 0) {
-        const anterior = historial.pop();
-        mostrar(anterior);
-    } else {
-        mostrar("pantallaInicial"); // Si no hay historial, vuelve a la pantalla inicial
-    }
+    document.querySelectorAll('.pantalla').forEach(pantalla => {
+        pantalla.classList.add('oculto');
+    });
+    document.getElementById('menuModos').classList.remove('oculto');
 }
 
 // === 3. FUNCIONES DE PANTALLA COMPLETA ===
@@ -261,116 +261,52 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 });
 
-// Cambiar al modo seleccionado
-function cambiarModo(modo) {
-    // if (modoActual !== modo) {
-    //     historial.push(window.pantallaActual); // Agregar la pantalla actual al historial
-    // }
-    modoActual = modo;
-    // limpiarPantalla();
+/**
+ * Genera burbujas aleatorias en la pantalla "Mar".
+ */
+function generarBurbujas() {
+    const contenedor = document.getElementById("contenedorBurbujas");
 
-    // Limpieza de intervalos y eventos previos
-    if (intervaloGusanos) clearInterval(intervaloGusanos);
-    if (intervaloBurbujas) clearInterval(intervaloBurbujas);
+    function crearBurbuja() {
+        const burbuja = document.createElement("div");
+        burbuja.className = "burbuja";
+        burbuja.style.left = `${Math.random() * 100}%`;
+        burbuja.style.animationDuration = `${4 + Math.random() * 3}s`; // Duración aleatoria entre 4 y 7 segundos
+        burbuja.style.width = burbuja.style.height = `${30 + Math.random() * 40}px`; // Tamaño aleatorio entre 30px y 70px
 
-    const menuModos = document.getElementById("menuModos");
-    // menuModos.replaceWith(menuModos.cloneNode(true)); // Eliminar eventos previos
+        // Evento para reventar la burbuja
+        burbuja.addEventListener("click", () => {
+            burbuja.classList.add("burbuja-reventada");
+            burbuja.addEventListener("animationend", () => burbuja.remove());
+        });
 
-    // Cambiar el fondo según el modo seleccionado
-    cambiarFondo(modo);
+        contenedor.appendChild(burbuja);
 
-    // Asignar lógica específica para cada modo
-    if (modo === "Cielo") {
-        menuModos.addEventListener("click", generarFuegoArtificial);
-    } else if (modo === "Tierra") {
-        intervaloGusanos = setInterval(() => {
-            if (modoActual !== "Tierra") {
-                clearInterval(intervaloGusanos);
-            } else {
-                generarGusano();
+        // Eliminar burbuja automáticamente después de su animación
+        burbuja.addEventListener("animationend", () => {
+            if (!burbuja.classList.contains("burbuja-reventada")) {
+                burbuja.remove();
             }
-        }, 2000);
-    } else if (modo === "Mar") {
-        intervaloBurbujas = setInterval(() => {
-            if (modoActual !== "Mar") {
-                clearInterval(intervaloBurbujas);
-            } else {
-                generarBurbuja();
-            }
-        }, 1000);
+        });
     }
 
-    mostrar(`pantalla${modo}`); // Mostrar la pantalla del modo seleccionado
+    // Crear burbujas continuamente
+    setInterval(crearBurbuja, 1000); // Una burbuja nueva cada segundo
 }
 
-// Función para cambiar el fondo según el modo
-function cambiarFondo(modo) {
-    const pantalla = document.getElementById("menuModos");
-    if (modo === "Cielo") {
-        pantalla.style.backgroundImage = "url('Fondos/Cielo.svg')";
-    } else if (modo === "Tierra") {
-        pantalla.style.backgroundImage = "url('Fondos/Tierra.svg')";
-    } else if (modo === "Mar") {
-        pantalla.style.backgroundImage = "url('Fondos/Mar.svg')";
-    }
-}
-
-// Función para limpiar la pantalla
-function limpiarPantalla() {
-    const menuModos = document.getElementById("menuModos");
-    menuModos.innerHTML = "";
-}
-
-// Función para generar fuegos artificiales
-function generarFuegoArtificial(event) {
-    if (modoActual !== "Cielo") return;
-
-    const fuego = document.createElement("div");
-    fuego.className = "fuego-artificial";
-    fuego.style.left = `${event.clientX}px`;
-    fuego.style.top = `${event.clientY}px`;
-    document.getElementById("menuModos").appendChild(fuego);
-
-    setTimeout(() => fuego.remove(), 1000);
-}
-
-// Función para generar gusanos
-function generarGusano() {
-    if (modoActual !== "Tierra") return;
-
-    const gusano = document.createElement("div");
-    gusano.className = "gusano";
-    gusano.style.left = `${Math.random() * 80 + 10}%`;
-    gusano.style.top = `${Math.random() * 80 + 10}%`;
-    document.getElementById("menuModos").appendChild(gusano);
-
-    gusano.addEventListener("click", () => {
-        gusano.classList.add("mareado");
-        setTimeout(() => gusano.remove(), 1000);
+// Iniciar las burbujas al mostrar la pantalla "Mar"
+document.addEventListener("DOMContentLoaded", () => {
+    const pantallaMar = document.getElementById("pantallaMar");
+    pantallaMar.addEventListener("transitionend", () => {
+        if (!pantallaMar.classList.contains("oculto")) {
+            generarBurbujas();
+        }
     });
 
-    setTimeout(() => gusano.remove(), 5000);
-}
-
-// Función para generar burbujas
-function generarBurbuja() {
-    if (modoActual !== "Mar") return;
-
-    const burbuja = document.createElement("div");
-    burbuja.className = "burbuja";
-    burbuja.style.left = `${Math.random() * 90 + 5}%`;
-    burbuja.style.bottom = `0%`;
-    document.getElementById("menuModos").appendChild(burbuja);
-
-    burbuja.addEventListener("click", () => {
-        burbuja.classList.add("reventada");
-        setTimeout(() => burbuja.remove(), 500);
+    // Asegurarse de que las burbujas se generen al mostrar la pantalla
+    pantallaMar.addEventListener("click", () => {
+        if (!pantallaMar.classList.contains("oculto")) {
+            generarBurbujas();
+        }
     });
-
-    setTimeout(() => burbuja.remove(), 5000);
-}
-
-// Asignar eventos a los botones de los modos
-document.querySelector("[aria-label='Cielo']").addEventListener("click", () => cambiarModo("Cielo"));
-document.querySelector("[aria-label='Tierra']").addEventListener("click", () => cambiarModo("Tierra"));
-document.querySelector("[aria-label='Mar']").addEventListener("click", () => cambiarModo("Mar"));
+});
