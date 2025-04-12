@@ -9,15 +9,20 @@ window.pantallaActual = "pantallaInicial"; // Pantalla inicial
  * @param {string} id - ID de la pantalla a mostrar.
  */
 function mostrar(id) {
+    // Ocultar todas las pantallas
     document.querySelectorAll(".pantalla").forEach(p => p.classList.add("oculto"));
-    document.getElementById(id).classList.remove("oculto");
+    // Mostrar la pantalla seleccionada
+    const pantalla = document.getElementById(id);
+    pantalla.classList.remove("oculto");
+    // Actualizar la pantalla actual
     window.pantallaActual = id;
 
+    // Mostrar u ocultar la barra de volver según la pantalla actual
     const barra = document.getElementById("barraVolver");
     barra.style.display = id === "pantallaInicial" ? "none" : "flex";
 
-    // Ajustar tamaño de los canvas visibles
-    document.querySelectorAll(`#${id} canvas`).forEach(canvas => {
+    // Ajustar el tamaño de los canvas visibles
+    pantalla.querySelectorAll("canvas").forEach(canvas => {
         if (canvas.getContext) {
             const ctx = canvas.getContext("2d");
             canvas.width = canvas.offsetWidth;
@@ -114,6 +119,7 @@ function irAPantalla(idPantalla) {
         pantalla.classList.add('oculto');
     });
     document.getElementById(idPantalla).classList.remove('oculto');
+    window.pantallaActual = idPantalla; // Actualizar la pantalla actual
 }
 
 function volver() {
@@ -467,7 +473,7 @@ function mostrarFuegoArtificial(event) {
     fuego.style.transform = "translate(-50%, -50%) scale(0)";
     fuego.style.transition = "transform 0.5s ease-out";
     fuego.style.pointerEvents = "none"; // Evitar que el fuego interfiera con otros eventos
-    fuego.style.zIndex = "10"; // Asegurarse de que esté por encima de otros elementos
+    fuego.style.zIndex = "30";
     fuego.style.width = "100%"; // Ajustar el tamaño del fuego
     fuego.style.height = "100%"; // Ajustar el tamaño del fuego
 
@@ -479,13 +485,34 @@ function mostrarFuegoArtificial(event) {
     // Remover el fuego artificial después de 2 segundos
     setTimeout(() => {
         fuego.remove();
-    }, 2000);
+    }, 1000);
 
     pantalla.appendChild(fuego);
 }
 
-// Agregar evento de clic/toque a la pantalla "Cielo"
-document.getElementById("pantallaCielo").addEventListener("click", mostrarFuegoArtificial);
+// Asegurar que el evento de clic en pantallaCielo se registre correctamente
+document.addEventListener("DOMContentLoaded", () => {
+    const pantallaCielo = document.getElementById("pantallaCielo");
+
+    // Registrar el evento de clic siempre, independientemente de la visibilidad
+    pantallaCielo.addEventListener("click", (event) => {
+        if (window.pantallaActual === "pantallaCielo") {
+            mostrarFuegoArtificial(event);
+        }
+    });
+
+    // Asegurar que los fuegos artificiales funcionen al mostrar la pantalla
+    pantallaCielo.addEventListener("transitionend", () => {
+        if (!pantallaCielo.classList.contains("oculto") && window.pantallaActual === "pantallaCielo") {
+            pantallaCielo.addEventListener("click", mostrarFuegoArtificial);
+        }
+    });
+});
+
+// Asegurar que la pantalla inicial esté correctamente configurada
+window.addEventListener("load", () => {
+    mostrar(window.pantallaActual); // Muestra la pantalla inicial
+});
 
 // === 9. FUNCIONALIDAD DEL BOTÓN INVISIBLE ===
 document.addEventListener("DOMContentLoaded", () => {
