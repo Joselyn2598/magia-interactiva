@@ -199,6 +199,81 @@ body {
     }
 }
 
+/* Animación de entrada/salida de los gusanos */
+@keyframes gusanoEntrar {
+    0% {
+        transform: translateY(100%);
+        visibility: visible;
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes gusanoSalir {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(100%);
+        visibility: hidden;
+    }
+}
+
+/* Animación de aplastamiento */
+@keyframes aplastar {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(0.5);
+    }
+}
+
+/* Estilo del botón de inicio */
+#botonIniciar {
+    fill: #8B4513; /* Marrón */
+    cursor: pointer;
+    transition: fill 0.3s ease;
+}
+
+#botonIniciar:hover {
+    fill: #A0522D; /* Marrón más claro */
+}
+
+#botonIniciar:active {
+    fill: #5C3317; /* Marrón más oscuro */
+}
+
+/* Botón de inicio para la pantalla de Tierra */
+#botonIniciarTierra {
+    z-index: 20;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    background-color: #6b8e23; /* Verde oliva */
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#botonIniciarTierra:hover {
+    background-color: #556b2f; /* Verde más oscuro */
+    transform: translateX(-50%) scale(1.05);
+}
+
+#botonIniciarTierra:active {
+    background-color: #3e4f1c; /* Verde aún más oscuro */
+    transform: translateX(-50%) scale(0.95);
+}
+
 /* Media queries para mejorar la responsividad */
 @media (max-width: 768px) {
     #contenedor-app {
@@ -322,4 +397,57 @@ body {
     z-index: 10; /* Asegúrate de que esté encima del fondo */
     pointer-events: auto;
     border: none;
+}
+
+#botonBurbujas {
+    z-index: 20;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    background-color: #1e88e5; /* Color azul similar al botón de la imagen */
+    border: none;
+    border-radius: 20px; /* Bordes redondeados */
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Transiciones suaves */
+}
+
+#botonBurbujas:hover {
+    background-color: #1565c0; /* Color más oscuro al pasar el cursor */
+    transform: translateX(-50%) scale(1.05); /* Efecto de agrandamiento */
+}
+
+#botonBurbujas:active {
+    background-color: #0d47a1; /* Color más oscuro al hacer clic */
+    transform: translateX(-50%) scale(0.95); /* Efecto de reducción */
+}
+
+/* Estilo de los gusanos */
+.gusano {
+    width: 150px;
+    height: 150px;
+    background: url('Elementos/Gusano.svg') no-repeat center center;
+    background-size: contain;
+    position: absolute;
+    visibility: hidden; /* Ocultar inicialmente */
+    cursor: pointer;
+    z-index: 10;
+    animation: none; /* Sin animación inicial */
+}
+
+/* Animación de aplastamiento (desaparición) */
+@keyframes aplastar {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.5) rotate(180deg);
+        opacity: 0;
+    }
 }

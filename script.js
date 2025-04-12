@@ -1,7 +1,7 @@
 // === 1. VARIABLES GLOBALES ===
 // Historial de navegación y control de pantalla actual
 let historial = [];
-window.pantallaActual = "pantallaInicial";
+window.pantallaActual = "pantallaInicial"; // Pantalla inicial
 
 // === 2. FUNCIONES DE NAVEGACIÓN ENTRE PANTALLAS ===
 /**
@@ -270,68 +270,63 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 });
 
-/**
- * Genera burbujas aleatorias en la pantalla "Mar".
- */
+// === 6. Genera burbujas aleatorias en la pantalla "Mar". ===
 function generarBurbujas() {
     const contenedor = document.getElementById("contenedorBurbujas");
+    let burbujasActivas = 0;
+    const maxBurbujas = 10;
 
     function crearBurbuja() {
+        if (burbujasActivas >= maxBurbujas) return;
+
         const burbuja = document.createElement("div");
         burbuja.className = "burbuja";
-        burbuja.style.left = `${Math.random() * 100}%`;
-        burbuja.style.animationDuration = `${4 + Math.random() * 3}s`; // Duración aleatoria entre 4 y 7 segundos
-        burbuja.style.width = burbuja.style.height = `${30 + Math.random() * 40}px`; // Tamaño aleatorio entre 30px y 70px
+        burbuja.style.left = `${Math.random() * 100}%`; // Posición horizontal aleatoria
+        burbuja.style.animationDuration = `${6 + Math.random() * 2}s`; // Duración aleatoria entre 6 y 8 segundos
+        burbuja.style.width = burbuja.style.height = "100px"; // Tamaño fijo de 100px
 
-        // Evento para reventar la burbuja
-        burbuja.addEventListener("click", () => {
-            burbuja.classList.add("burbuja-reventada");
-            burbuja.addEventListener("animationend", () => burbuja.remove());
-        });
-
-        contenedor.appendChild(burbuja);
-
-        // Eliminar burbuja automáticamente después de su animación
         burbuja.addEventListener("animationend", () => {
             if (!burbuja.classList.contains("burbuja-reventada")) {
                 burbuja.remove();
+                burbujasActivas--;
+                crearBurbuja(); // Crear una nueva burbuja al desaparecer
             }
         });
+
+        burbuja.addEventListener("click", () => {
+            burbuja.classList.add("burbuja-reventada");
+            burbuja.style.animationDuration = "0.05s"; // Animación de reventado más rápida
+            burbuja.addEventListener("animationend", () => {
+                burbuja.remove();
+                burbujasActivas--;
+                crearBurbuja(); // Crear una nueva burbuja al reventar
+            });
+        });
+
+        contenedor.appendChild(burbuja);
+        burbujasActivas++;
     }
 
-    // Crear burbujas continuamente
-    setInterval(crearBurbuja, 1000); // Una burbuja nueva cada segundo
-}
-
-/**
- * Inicia la generación de burbujas y cambia el fondo de la pantalla "Mar".
- */
-function iniciarBurbujas() {
-    const contenedorBurbujas = document.getElementById("contenedorBurbujas");
-    const fondoMar = document.getElementById("fondoMar");
-
-    // Cambiar el fondo
-    fondoMar.src = "Fondos/Mar.svg";
-
-    // Generar burbujas cada 500ms
+    // Crear burbujas iniciales
     const intervaloBurbujas = setInterval(() => {
-        const burbuja = document.createElement("div");
-        burbuja.className = "burbuja";
-        burbuja.style.left = Math.random() * 100 + "%"; // Posición horizontal aleatoria
-        burbuja.style.animationDuration = Math.random() * 3 + 2 + "s"; // Duración aleatoria
+        if (burbujasActivas < maxBurbujas) {
+            crearBurbuja();
+        }
+    }, 1000);
 
-        contenedorBurbujas.appendChild(burbuja);
-
-        // Eliminar burbuja después de la animación
-        burbuja.addEventListener("animationend", () => {
-            burbuja.remove();
-        });
-    }, 500);
-
-    // Detener las burbujas después de 10 segundos
+    // Detener las burbujas después de 10 segundos (opcional)
     setTimeout(() => {
         clearInterval(intervaloBurbujas);
     }, 10000);
+}
+
+/**
+ * Inicia la generación de burbujas al presionar el botón.
+ */
+function iniciarBurbujas() {
+    const botonIniciar = document.getElementById("botonBurbujas");
+    botonIniciar.style.display = "none"; // Ocultar el botón al iniciar
+    generarBurbujas();
 }
 
 // Iniciar las burbujas al mostrar la pantalla "Mar"
@@ -339,16 +334,166 @@ document.addEventListener("DOMContentLoaded", () => {
     const pantallaMar = document.getElementById("pantallaMar");
     pantallaMar.addEventListener("transitionend", () => {
         if (!pantallaMar.classList.contains("oculto")) {
-            generarBurbujas();
-            iniciarBurbujas();
+            const botonIniciar = document.getElementById("botonBurbujas");
+            botonIniciar.style.display = "block"; // Mostrar el botón al mostrar la pantalla
         }
     });
 
     // Asegurarse de que las burbujas se generen al mostrar la pantalla
     pantallaMar.addEventListener("click", () => {
         if (!pantallaMar.classList.contains("oculto")) {
-            generarBurbujas();
-            iniciarBurbujas();
+            const botonIniciar = document.getElementById("botonBurbujas");
+            botonIniciar.style.display = "block"; // Mostrar el botón al mostrar la pantalla
         }
+    });
+});
+
+// === 7. GUSANOS EN PANTALLA ===
+// Este código maneja la aparición y desaparición de gusanos en la pantalla de Tierra
+
+document.addEventListener("DOMContentLoaded", () => {
+    const gusanosPorPantalla = {
+        pantallaTierra: Array.from(document.querySelectorAll("#pantallaTierra .gusano")),
+        // Si hay más pantallas con gusanos, se pueden agregar aquí.
+    };
+
+    let intervalos = {};
+
+    /**
+     * Muestra gusanos aleatoriamente en una pantalla específica.
+     * @param {string} pantallaId - ID de la pantalla donde se mostrarán los gusanos.
+     */
+    function mostrarGusanos(pantallaId) {
+        const gusanos = gusanosPorPantalla[pantallaId];
+        if (!gusanos) return;
+
+        // Ocultar gusanos que no están desapareciendo
+        gusanos.forEach(gusano => {
+            if (!gusano.classList.contains("desapareciendo")) {
+                gusano.style.visibility = "hidden";
+            }
+        });
+
+        const cantidad = Math.floor(Math.random() * 5) + 1; // Mostrar entre 1 y 5 gusanos
+        const seleccionados = gusanos
+            .filter(gusano => !gusano.classList.contains("desapareciendo")) // Excluir los que están desapareciendo
+            .sort(() => 0.5 - Math.random())
+            .slice(0, cantidad);
+
+        seleccionados.forEach(gusano => {
+            gusano.style.visibility = "visible"; // Hacer visible el gusano
+            gusano.style.animation = "none"; // Reiniciar cualquier animación previa
+
+            gusano.addEventListener("click", () => {
+                if (!gusano.classList.contains("aplastado")) { // Evitar reiniciar la animación si ya está aplastado
+                    gusano.classList.add("aplastado", "desapareciendo"); // Agregar clases para evitar múltiples clics y marcar como desapareciendo
+                    gusano.style.animation = "aplastar 3s forwards"; // Nueva animación de aplastamiento
+                    setTimeout(() => {
+                        gusano.style.visibility = "hidden"; // Ocultar después de la animación
+                        gusano.classList.remove("aplastado", "desapareciendo"); // Permitir que se pueda volver a usar
+                    }, 3000); // Tiempo de la animación
+                }
+            });
+        });
+    }
+
+    /**
+     * Inicia el juego de gusanos en una pantalla específica.
+     * @param {string} pantallaId - ID de la pantalla donde se iniciará el juego.
+     */
+    function iniciarGusanos(pantallaId) {
+        detenerGusanos(pantallaId); // Asegurarse de que no haya intervalos previos
+        intervalos[pantallaId] = setInterval(() => mostrarGusanos(pantallaId), Math.random() * 1 + 2000); // Intervalo entre 0.5 y 1.5 segundos
+    }
+
+    /**
+     * Detiene el juego de gusanos en una pantalla específica y los oculta.
+     * @param {string} pantallaId - ID de la pantalla donde se detendrá el juego.
+     */
+    function detenerGusanos(pantallaId) {
+        if (intervalos[pantallaId]) {
+            clearInterval(intervalos[pantallaId]);
+            intervalos[pantallaId] = null;
+        }
+        const gusanos = gusanosPorPantalla[pantallaId];
+        if (gusanos) {
+            gusanos.forEach(gusano => {
+                gusano.style.visibility = "hidden"; // Ocultar todos los gusanos
+            });
+        }
+    }
+
+    // Asociar el botón de inicio de la pantalla de Tierra
+    const botonIniciarTierra = document.getElementById("botonIniciarTierra");
+    if (botonIniciarTierra) {
+        botonIniciarTierra.addEventListener("click", () => iniciarGusanos("pantallaTierra"));
+    }
+
+    // Detener gusanos al regresar de la pantalla
+    const botonVolver = document.getElementById("barraVolver");
+    if (botonVolver) {
+        botonVolver.addEventListener("click", () => detenerGusanos("pantallaTierra"));
+    }
+});
+
+// === 8. FUNCIONALIDAD DE FUEGOS ARTIFICIALES ===
+/**
+ * Muestra un fuego artificial en la posición tocada.
+ * @param {Event} event - Evento de clic o toque.
+ */
+function mostrarFuegoArtificial(event) {
+    if (window.pantallaActual !== "pantallaCielo") return;
+
+    const pantalla = document.getElementById("pantallaCielo");
+    const fuego = document.createElement("img");
+
+    // Seleccionar aleatoriamente una imagen de fuego artificial
+    const imagenesFuego = [
+        "./Elementos/Fuego1.svg",
+        "./Elementos/Fuego2.svg",
+        "./Elementos/Fuego3.svg",
+        "./Elementos/Fuego4.svg",
+        "./Elementos/Fuego5.svg"
+    ];
+    fuego.src = imagenesFuego[Math.floor(Math.random() * imagenesFuego.length)];
+
+    // Posicionar el fuego artificial en la posición del clic/toque
+    const rect = pantalla.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    fuego.style.position = "absolute";
+    fuego.style.left = `${x}px`;
+    fuego.style.top = `${y}px`;
+    fuego.style.transform = "translate(-50%, -50%) scale(0)";
+    fuego.style.transition = "transform 0.5s ease-out";
+    fuego.style.pointerEvents = "none"; // Evitar que el fuego interfiera con otros eventos
+    fuego.style.zIndex = "10"; // Asegurarse de que esté por encima de otros elementos
+    fuego.style.width = "100%"; // Ajustar el tamaño del fuego
+    fuego.style.height = "100%"; // Ajustar el tamaño del fuego
+
+    // Agregar animación de aparición
+    setTimeout(() => {
+        fuego.style.transform = "translate(-50%, -50%) scale(1)";
+    }, 0);
+
+    // Remover el fuego artificial después de 2 segundos
+    setTimeout(() => {
+        fuego.remove();
+    }, 2000);
+
+    pantalla.appendChild(fuego);
+}
+
+// Agregar evento de clic/toque a la pantalla "Cielo"
+document.getElementById("pantallaCielo").addEventListener("click", mostrarFuegoArtificial);
+
+// === 9. FUNCIONALIDAD DEL BOTÓN INVISIBLE ===
+document.addEventListener("DOMContentLoaded", () => {
+    const botonInvisible = document.getElementById('boton-invisible');
+    const fondo = document.getElementById('fondo');
+
+    botonInvisible.addEventListener('click', () => {
+        fondo.style.background = "url('/workspaces/magia-interactiva/Fondos/Mar.svg') no-repeat center center";
+        fondo.style.backgroundSize = "cover";
     });
 });

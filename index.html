@@ -49,15 +49,26 @@
             <!-- PANTALLA TIERRA -->
             <div id="pantallaTierra" class="pantalla oculto">
                 <img src="Fondos/Tierra.svg" class="fondo" />
+                <!-- Gusanos que aparecerán en las zonas -->
+                <div class="gusano" style="top: -5%; left: 8%;"></div>
+                <div class="gusano" style="top: -5%; left: 43%;"></div>
+                <div class="gusano" style="top: -5%; left: 77%;"></div>
+                <div class="gusano" style="top: 26%; left: 8%;"></div>
+                <div class="gusano" style="top: 24%; left: 42%;"></div>
+                <div class="gusano" style="top: 24%; left: 77%;"></div>
+                <div class="gusano" style="top: 57%; left: 8%;"></div>
+                <div class="gusano" style="top: 55%; left: 42%;"></div>
+                <div class="gusano" style="top: 53%; left: 77%;"></div>
+                <button id="botonIniciarTierra" aria-label="Iniciar gusanos">INICIAR</button>
                 <button id="barraVolver" onclick="volver()" aria-label="Volver">←</button>
                 <button id="boton-fullscreen" onclick="activarPantallaCompleta()" aria-label="Pantalla completa">⛶</button>
             </div>
 
             <!-- PANTALLA MAR -->
             <div id="pantallaMar" class="pantalla oculto">
-                <img src="Fondos/MarInicio.svg" id="fondoMar" class="fondo" />
+                <img src="Fondos/Mar.svg" id="fondoMar" class="fondo" />
                 <div id="contenedorBurbujas"></div> <!-- Contenedor para las burbujas -->
-                <button id="botonBurbujas" onclick="iniciarBurbujas()" aria-label="Iniciar burbujas">🌊</button>
+                <button id="botonBurbujas" onclick="iniciarBurbujas()" aria-label="Iniciar burbujas">INICIAR</button>
                 <button id="barraVolver" onclick="volver()" aria-label="Volver">←</button>
                 <button id="boton-fullscreen" onclick="activarPantallaCompleta()" aria-label="Pantalla completa">⛶</button>
             </div>
@@ -97,14 +108,13 @@
         <div id="avisoOrientacion">Por favor gira tu dispositivo a horizontal 😊</div>
     </div>
 
+    <div id="fondo">
+        <button id="boton-invisible"></button>
+    </div>
+
     <!-- Script principal -->
     <script src="script.js"></script>
     <script src="dynamicContent.js"></script> <!-- Nuevo script para contenido dinámico -->
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            cambiarGrosorTrazo(20); // Fijar el grosor del trazo al máximo al cargar la página
-        });
-    </script>
 </body>
 
 </html>
