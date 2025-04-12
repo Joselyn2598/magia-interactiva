@@ -120,6 +120,12 @@ function volver() {
         pantalla.classList.add('oculto');
     });
     document.getElementById('menuModos').classList.remove('oculto');
+
+    // Limpiar burbujas si se está saliendo de la pantalla "Mar"
+    if (window.pantallaActual === "pantallaMar") {
+        const contenedorBurbujas = document.getElementById("contenedorBurbujas");
+        contenedorBurbujas.innerHTML = ""; // Eliminar todas las burbujas
+    }
 }
 
 // === 3. FUNCIONES DE PANTALLA COMPLETA ===
@@ -294,12 +300,44 @@ function generarBurbujas() {
     setInterval(crearBurbuja, 1000); // Una burbuja nueva cada segundo
 }
 
+/**
+ * Inicia la generación de burbujas y cambia el fondo de la pantalla "Mar".
+ */
+function iniciarBurbujas() {
+    const contenedorBurbujas = document.getElementById("contenedorBurbujas");
+    const fondoMar = document.getElementById("fondoMar");
+
+    // Cambiar el fondo
+    fondoMar.src = "Fondos/Mar.svg";
+
+    // Generar burbujas cada 500ms
+    const intervaloBurbujas = setInterval(() => {
+        const burbuja = document.createElement("div");
+        burbuja.className = "burbuja";
+        burbuja.style.left = Math.random() * 100 + "%"; // Posición horizontal aleatoria
+        burbuja.style.animationDuration = Math.random() * 3 + 2 + "s"; // Duración aleatoria
+
+        contenedorBurbujas.appendChild(burbuja);
+
+        // Eliminar burbuja después de la animación
+        burbuja.addEventListener("animationend", () => {
+            burbuja.remove();
+        });
+    }, 500);
+
+    // Detener las burbujas después de 10 segundos
+    setTimeout(() => {
+        clearInterval(intervaloBurbujas);
+    }, 10000);
+}
+
 // Iniciar las burbujas al mostrar la pantalla "Mar"
 document.addEventListener("DOMContentLoaded", () => {
     const pantallaMar = document.getElementById("pantallaMar");
     pantallaMar.addEventListener("transitionend", () => {
         if (!pantallaMar.classList.contains("oculto")) {
             generarBurbujas();
+            iniciarBurbujas();
         }
     });
 
@@ -307,6 +345,7 @@ document.addEventListener("DOMContentLoaded", () => {
     pantallaMar.addEventListener("click", () => {
         if (!pantallaMar.classList.contains("oculto")) {
             generarBurbujas();
+            iniciarBurbujas();
         }
     });
 });
