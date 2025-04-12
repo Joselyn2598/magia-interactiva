@@ -21,7 +21,7 @@
             <button id="boton-fullscreen" onclick="activarPantallaCompleta()" aria-label="Pantalla completa">⛶</button>
 
             <!-- BOTÓN LIMPIAR CANVAS -->
-            <button onclick="limpiarCanvas('canvasLetraA')">Limpiar</button>
+            <!-- <button onclick="limpiarCanvas('canvasLetraA')">Limpiar</button> -->
 
             <!-- PANTALLA INICIAL -->
             <div id="pantallaInicial" class="pantalla">
@@ -34,12 +34,19 @@
             <div id="menuModos" class="pantalla oculto">
                 <img src="Menus/2_MenuModos.svg" class="fondo" />
                 <!-- Botones de selección de modos -->
-                <button class="zona-menus" style="top: 22.5%; left: 2%;" aria-label="Cielo"></button>
-                <button class="zona-menus" style="top: 47%; left: 2%;" aria-label="Tierra"></button>
-                <button class="zona-menus" style="top: 72%; left: 2%;" aria-label="Mar"></button>
+                <button class="zona-menus" style="top: 22.5%; left: 2%;" onclick="cambiarModo('Cielo')" aria-label="Cielo"></button>
+                <button class="zona-menus" style="top: 47%; left: 2%;" onclick="cambiarModo('Tierra')" aria-label="Tierra"></button>
+                <button class="zona-menus" style="top: 72%; left: 2%;" onclick="cambiarModo('Mar')" aria-label="Mar"></button>
                 <button class="zona-menus" style="top: 22.5%; left: 53%;" onclick="irAMenuLetras()" aria-label="Abecedario"></button>
                 <button class="zona-menus" style="top: 47%; left: 53%;" onclick="irAMenuNumeros()" aria-label="Números"></button>
                 <button class="zona-menus" style="top: 72%; left: 53%;" onclick="irAMenuFiguras()" aria-label="Figuras"></button>
+            </div>
+
+            <!-- Contenedor dinámico para pantallas de modos -->
+            <div id="pantallasModos">
+                <script>
+                    cambiarGrosorTrazo(20); // Fijar el grosor del trazo al máximo
+                </script>
             </div>
 
             <!-- MENÚ LETRAS -->

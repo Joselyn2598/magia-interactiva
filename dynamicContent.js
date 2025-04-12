@@ -157,6 +157,26 @@ figuras.forEach(({ figura, top, left, width, height }) => {
     }
 });
 
+const modos = [
+    { id: "Cielo", fondo: "Fondos/Cielo.svg" },
+    { id: "Tierra", fondo: "Fondos/Tierra.svg" },
+    { id: "Mar", fondo: "Fondos/Mar.svg" },
+];
+
+const pantallasModos = document.getElementById("pantallasModos");
+
+// Generar pantallas dinámicamente para los modos
+modos.forEach(({ id, fondo }) => {
+    const pantalla = document.createElement("div");
+    pantalla.id = `pantalla${id}`;
+    pantalla.className = "pantalla oculto";
+    pantalla.innerHTML = `
+        <img src="${fondo}" class="fondo" />
+        <div id="contenido${id}" class="contenido-modo"></div>
+    `;
+    pantallasModos.appendChild(pantalla);
+});
+
 // Function to play audio
 function reproducirAudio(audioId) {
     const audio = new Audio(`Audios/${audioId}.mp3`);

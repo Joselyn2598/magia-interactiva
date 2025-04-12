@@ -243,3 +243,76 @@ body {
     pointer-events: auto;
     border: none;
 }
+
+/* Fuegos artificiales */
+.fuego-artificial {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, yellow, red, transparent);
+    border-radius: 50%;
+    animation: explotar 1s ease-out;
+    pointer-events: none;
+}
+
+@keyframes explotar {
+    0% {
+        transform: scale(0.5);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Gusanos */
+.gusano {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: url('/Elementos/Gusano.svg') no-repeat center/contain;
+    animation: moverse 2s infinite;
+    cursor: pointer;
+}
+
+.gusano.mareado {
+    transform: rotate(180deg);
+    opacity: 0.5;
+    animation: none;
+}
+
+@keyframes moverse {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Burbujas */
+.burbuja {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: rgba(173, 216, 230, 0.7);
+    border-radius: 50%;
+    animation: flotar 5s linear;
+    pointer-events: auto;
+}
+
+.burbuja.reventada {
+    background: transparent;
+    border: none;
+    animation: none;
+}
+
+@keyframes flotar {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-100vh);
+    }
+}
