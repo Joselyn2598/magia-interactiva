@@ -109,6 +109,7 @@ function irAFigura(figuraId) {
 }
 
 function irAPantalla(idPantalla) {
+    historial.push(window.pantallaActual); // Agregar la pantalla actual al historial
     document.querySelectorAll('.pantalla').forEach(pantalla => {
         pantalla.classList.add('oculto');
     });
@@ -116,10 +117,12 @@ function irAPantalla(idPantalla) {
 }
 
 function volver() {
-    document.querySelectorAll('.pantalla').forEach(pantalla => {
-        pantalla.classList.add('oculto');
-    });
-    document.getElementById('menuModos').classList.remove('oculto');
+    const pantallaAnterior = historial.pop(); // Obtener la pantalla anterior del historial
+    if (pantallaAnterior) {
+        mostrar(pantallaAnterior); // Mostrar la pantalla anterior
+    } else {
+        mostrar('pantallaInicial'); // Si no hay historial, volver a la pantalla inicial
+    }
 
     // Limpiar burbujas si se está saliendo de la pantalla "Mar"
     if (window.pantallaActual === "pantallaMar") {
